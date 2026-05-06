@@ -11,9 +11,11 @@ https://frontendmasters.com/courses/developer-productivity-v2/
 Free slides:        https://frontendmasters.github.io/dev-prod-2/lessons/navigation/tmux
 Example project:    https://github.com/ThePrimeagen/.dotfiles/tree/master
 
-
-# .configs
-Repo to contain templates for my dot files and common executables
+# Install
+Run this command to use stow and set up sym links to all of your configuration files.
+```zsh
+./install.zsh
+```
 
 
 # .ssh Notes
