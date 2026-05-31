@@ -5,20 +5,11 @@
 # ==============================================================================
 # ALIAS
 # ==============================================================================
-# Navigation:
-alias me="cd ~/"
-alias mecode="cd ~/code"
-
 # Utility:
 alias ls="ls --color=auto"
 alias la="ls -la"
 alias ll="ls -l"
 alias lt="ls -ltra"
-
-# Settings
-alias python="python3"
-alias py="python"
-export PYTHONPYCACHEPREFIX=/tmp/pycache
 
 # ==============================================================================
 # Aesthetics
