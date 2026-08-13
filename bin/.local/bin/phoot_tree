@@ -1,0 +1,8 @@
+#!/bin/bash
+# This is a basic wrapper script to call the tree.py tool
+
+# Get the location of the file directory
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+
+# Run the tool using a relative path
+python3 ${SCRIPT_DIR}/lib/tree.py

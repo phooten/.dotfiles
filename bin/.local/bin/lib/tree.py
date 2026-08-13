@@ -1,10 +1,19 @@
-import os
+# !/usr/bin/env python3
+################################################################################
+#
+# File: tree.py
+#
+# Purpose: Print directory tree structure
+#
+# Description:
+#   A simple script to print the directory tree structure of the current working directory.
+#
+#   Obviously there are better tools out there. This script is meant for systems
+#   that aren't able to install the packages offline.
+#
+################################################################################
 
-# TODO: Get a better example
-# TODO: Move to proper location for python
-# TODO: Ignore the following directories:
-        # .DS_Store
-        # .git
+import os
 
 def print_tree(start_path: str, prefix: str = "") -> None:
     """Recursively print a directory tree structure."""
@@ -22,7 +31,6 @@ def print_tree(start_path: str, prefix: str = "") -> None:
             extension = "    " if index == entries_count - 1 else "│   "
             print_tree(path, prefix + extension)
 
-
 def main():
     # Print current working directory
     current_dir = os.getcwd()
@@ -32,7 +40,6 @@ def main():
 
     # Print directory tree
     print_tree(current_dir)
-
 
 if __name__ == "__main__":
     main()

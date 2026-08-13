@@ -1,5 +1,20 @@
 # !/bin/bash
-# TODO: Need description of script
+################################################################################
+#
+# File:     remove_icps.sh
+#
+# Purpose:  Remove ipcs types based on certain users.
+#
+# Usage:    remove_icps.sh -u=<user> -t=<type>
+#
+# Description:
+#   This script is used to remove ipcs types based on certain users. The user can
+#   specify the user and the type of ipcs to remove.
+#
+#   Types: semaphores, message queues, shared memory, or all
+#   Default user: is the current user.
+#
+################################################################################
 
 print_usage()
 {
