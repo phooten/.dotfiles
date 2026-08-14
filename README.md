@@ -42,8 +42,25 @@ Only one action may be used at a time. The script will exit with an error if bot
 ```
 
 # Pipelines
-_Not tested yet. Unsure if it works. Need to transfer to gitlab._
-This repository includes a basic GitLab CI configuration in [.gitlab-ci.yml](.gitlab-ci.yml) that runs a ShellCheck lint job and the Bash test suite.
+This repository includes a basic GitLab CI configuration in [.gitlab-ci.yml](.gitlab-ci.yml) with three stages:
+
+1. `lint` — runs ShellCheck against the installer script and test file
+2. `test` — runs the Bash unit tests
+3. `release` — runs on the `main` branch after a successful test pipeline and creates a Git tag using the latest entry in [CHANGELOG.md](CHANGELOG.md)
+
+The release job reads the newest version heading in the changelog, for example:
+
+```md
+## [1.2.3] - 2026-08-14
+```
+
+and creates a matching tag such as:
+
+```bash
+v1.2.3
+```
+
+The tag is only created when the pipeline succeeds on `main`, and it will skip creation if that tag already exists.
 
 # Testing
 Run the unit tests locally from the *repository root*:
