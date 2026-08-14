@@ -9,4 +9,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Baseline files, configs, and templates
 - Script to setup and teardown the files into home directory
+- Gitlab pipeline spec to run linting, unit tests, and tagging
 
