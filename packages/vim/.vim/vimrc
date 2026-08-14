@@ -1,4 +1,7 @@
 " General Settings
+
+set viminfo+=n~/.vim/viminfo
+
 set list
 set number
 set cursorline
