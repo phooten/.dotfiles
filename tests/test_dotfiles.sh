@@ -64,7 +64,7 @@ test_rejects_conflicting_actions() {
         return 1
     fi
 
-    if ! grep -q "only one action flag may be used at a time" <<<"$output"; then
+    if ! grep -qi "only one action flag may be used at a time" <<<"$output"; then
         echo "FAIL: conflicting action message missing"
         echo "$output"
         rm -rf "$tmp_home"

@@ -46,7 +46,8 @@ set_action() {
     local new_action="$1"
 
     if [[ -n "$ACTION" ]]; then
-        echo "Error: only one action flag may be used at a time: $ACTION and $new_action"
+        echo "ERROR:"
+        echo "  Only one action flag may be used at a time: $ACTION and $new_action"
         show_help
         exit 1
     fi
@@ -85,10 +86,13 @@ show_help() {
 install_dotfiles() {
     pushd "$PACKAGE_ROOT" || exit 1
 
+    verbose "Installing '${PACKAGE_ROOT}/<dir>' dotfiles from home directory '${HOME}'"
     for folder in "${STOW_FOLDERS[@]}"
     do
-        verbose "Installing: stow $folder -> $HOME/ from $PACKAGE_ROOT"
+        verbose "   CMD: 'stow -t $HOME -D $folder 2>/dev/null'"
         stow -t "$HOME" -D "$folder" 2>/dev/null
+
+        verbose "   CMD: 'stow -t $HOME $folder"
         stow -t "$HOME" "$folder"
     done
 
@@ -99,9 +103,10 @@ install_dotfiles() {
 uninstall_dotfiles() {
     pushd "$PACKAGE_ROOT" || exit 1
 
+    verbose "Uninstalling '${PACKAGE_ROOT}/<dir>' dotfiles from home directory '${HOME}'"
     for folder in "${STOW_FOLDERS[@]}"
     do
-        verbose "Uninstalling: stow -D $folder from $HOME/ using $PACKAGE_ROOT"
+        verbose "   CMD: 'stow -t $HOME -D $folder'"
         stow -t "$HOME" -D "$folder"
     done
 

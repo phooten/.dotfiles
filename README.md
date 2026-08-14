@@ -41,6 +41,23 @@ Only one action may be used at a time. The script will exit with an error if bot
 ./dotfiles.sh --install --uninstall
 ```
 
+# Pipelines
+_Not tested yet. Unsure if it works. Need to transfer to gitlab._
+This repository includes a basic GitLab CI configuration in [.gitlab-ci.yml](.gitlab-ci.yml) that runs a ShellCheck lint job and the Bash test suite.
+
+# Testing
+Run the unit tests locally from the *repository root*:
+
+```bash
+bash tests/test_dotfiles.sh
+```
+
+If you want to check the script syntax first:
+
+```bash
+bash -n dotfiles.sh
+```
+
 # Notes
 - The script accepts either long or short flags.
 - Verbose mode is optional and only prints additional diagnostic output when enabled.
@@ -88,10 +105,3 @@ packages/vscode
 ```
 
 This makes the repo easier to scale without mixing package roots with top-level project files or scripts.
-
-# References
-One thought is to follow: "My Dev Setup Is Better Than Yours" (Paid subscription $39)
-https://frontendmasters.com/courses/developer-productivity-v2/
-
-Free slides:        https://frontendmasters.github.io/dev-prod-2/lessons/navigation/tmux
-Example project:    https://github.com/ThePrimeagen/.dotfiles/tree/master
