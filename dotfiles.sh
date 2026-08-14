@@ -8,26 +8,25 @@
 #       uninstallation of dotfile symlinks in the user's home directory.
 #
 # Usage:
-#       ./dotfiles.sh [flag]
+#
+#   Actions:
+#       ./dotfiles.sh -i | --install    Install all dotfile symlinks to ~/
+#       ./dotfiles.sh -u | --uninstall  Remove all dotfile symlinks from ~/
+#
+#  Options:
+#       ./dotfiles.sh -h | --help       Show this help message
+#       ./dotfiles.sh -v | --verbose    Enable verbose output
 #
 ################################################################################
 
-show_help() {
-    echo "Usage: $0 [flag]"
-    echo "Flags:"
-    echo "  -i, --install    Install all dotfile symlinks to ~/"
-    echo "  -u, --uninstall  Remove all dotfile symlinks from ~/"
-    echo "  -h, --help       Show this help message"
-}
-
-if [[ -z $1 ]]; then
-    show_help
-    exit 1
-fi
-
+VERBOSE=false
+ACTION=""
+DOTFILES=$(pwd)
+PACKAGE_ROOT="$DOTFILES/packages"
 # Set files that should be stowed in the home directory
 if [[ -z $STOW_FOLDERS ]]; then
     STOW_FOLDERS=(
+        bash
         bin
         docker
         ssh
@@ -37,55 +36,120 @@ if [[ -z $STOW_FOLDERS ]]; then
     )
 fi
 
-# The dotfiles directory is the current working directory if not set
-if [[ -z $DOTFILES ]]; then
-    DOTFILES=$(pwd)
+verbose() {
+    if [[ "$VERBOSE" == true ]]; then
+        printf '%s\n' "$*"
+    fi
+}
+
+set_action() {
+    local new_action="$1"
+
+    if [[ -n "$ACTION" ]]; then
+        echo "Error: only one action flag may be used at a time: $ACTION and $new_action"
+        show_help
+        exit 1
+    fi
+
+    ACTION="$new_action"
+}
+
+debug_env() {
+    if [[ "$VERBOSE" != true ]]; then
+        return
+    fi
+
+    echo "============================================="
+    echo "Environmental Variables"
+    echo "  ACTION: ${ACTION}"
+    echo "  DOTFILES: ${DOTFILES}"
+    echo "  PACKAGE_ROOT: ${PACKAGE_ROOT}"
+    echo "  HOME: ${HOME}"
+    echo "  STOW_FOLDERS: ${STOW_FOLDERS[*]}"
+    echo "  VERBOSE: ${VERBOSE}"
+    echo "============================================="
+}
+
+show_help() {
+    echo "Usage: $0 [action-flag] [options]"
+    echo ""
+    echo "Actions:"
+    echo "  -i, --install    Install all dotfile symlinks to ~/"
+    echo "  -u, --uninstall  Remove all dotfile symlinks from ~/"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help       Show this help message"
+    echo "  -v, --verbose    Enable verbose output"
+}
+
+install_dotfiles() {
+    pushd "$PACKAGE_ROOT" || exit 1
+
+    for folder in "${STOW_FOLDERS[@]}"
+    do
+        verbose "Installing: stow $folder -> $HOME/ from $PACKAGE_ROOT"
+        stow -t "$HOME" -D "$folder" 2>/dev/null
+        stow -t "$HOME" "$folder"
+    done
+
+    popd || exit 1
+    echo "Dotfiles successfully installed to home directory!"
+}
+
+uninstall_dotfiles() {
+    pushd "$PACKAGE_ROOT" || exit 1
+
+    for folder in "${STOW_FOLDERS[@]}"
+    do
+        verbose "Uninstalling: stow -D $folder from $HOME/ using $PACKAGE_ROOT"
+        stow -t "$HOME" -D "$folder"
+    done
+
+    popd || exit 1
+    echo "Dotfiles cleanly uninstalled from home directory!"
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -i|--install)
+            set_action "install"
+            ;;
+        -u|--uninstall)
+            set_action "uninstall"
+            ;;
+        -v|--verbose)
+            VERBOSE=true
+            ;;
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        *)
+            echo "Error: Unknown option '$1'"
+            show_help
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+if [[ -z "$ACTION" ]]; then
+    show_help
+    exit 1
 fi
 
-# Parse arguements and execute the appropriate action
-case "$1" in
-    -i|--install)
-        pushd "$DOTFILES"
-        for folder in ${STOW_FOLDERS[@]}
-        do
-            echo "Installing: stow $folder -> $HOME/"
-            # Added -t $HOME to target the home directory explicitly
-            stow -t "$HOME" -D "$folder" 2>/dev/null
-            stow -t "$HOME" "$folder"
-        done
-        popd
-        echo "Dotfiles successfully installed to home directory!"
+case "$ACTION" in
+    install)
+        install_dotfiles
         ;;
-
-    -u|--uninstall)
-        pushd "$DOTFILES"
-        # for folder in $(echo "$STOW_FOLDERS" | sed "s/,/ /g")
-        for folder in ${STOW_FOLDERS[@]}
-        do
-            echo "Uninstalling: stow -D $folder from $HOME/"
-            # Added -t $HOME to remove from the home directory explicitly
-            stow -t "$HOME" -D "$folder"
-        done
-        popd
-        echo "Dotfiles cleanly uninstalled from home directory!"
+    uninstall)
+        uninstall_dotfiles
         ;;
-
-    -h|--help)
-        show_help
-        exit 0
-        ;;
-
     *)
-        echo "Error: Unknown option '$1'"
+        echo "Error: Unknown action '$ACTION'"
         show_help
         exit 1
         ;;
 esac
 
-# Print out environmental variables
-# echo "============================================="
-# echo "Environmental Variables"
-# echo "  STOW_FOLDERS: ${STOW_FOLDERS[@]}"
-# echo "  DOTFILES: ${DOTFILES}"
-# echo "  HOME: ${HOME}"
-# echo "============================================="
+debug_env

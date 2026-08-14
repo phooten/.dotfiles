@@ -1,0 +1,22 @@
+stages:
+  - lint
+  - test
+
+shellcheck:
+  stage: lint
+  image: debian:bookworm-slim
+  script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends shellcheck
+    - shellcheck dotfiles.sh
+    - shellcheck tests/*.sh
+
+dotfiles-tests:
+  stage: test
+  image: debian:bookworm-slim
+  needs:
+    - shellcheck
+  script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends bash stow
+    - bash tests/test_dotfiles.sh
